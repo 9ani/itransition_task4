@@ -1,0 +1,22 @@
+<header class="bg-light p-3"> 
+    <div class="container d-flex justify-content-between align-items-center"> 
+        <div class="logo">
+            <a class="navbar-brand" href="/">ITRANSITION</a> 
+        </div>
+
+
+        <div class="auth_buttons d-flex"> 
+            <% if (user._id && !user.isAdmin) { %>
+                <a href="/profile/<%= user._id %>">
+                    <img src="/images/icons/profile-img.png" id="mini" class="rounded-circle" alt="Profile"> 
+                </a>
+            <% } else if (user._id && user.isAdmin) { %>
+                <a class="btn btn-outline-secondary me-2" href="/admin/<%= user._id %>">Profile</a> 
+                <a class="btn btn-outline-danger" href="/api/signout">Logout</a>
+            <% } else { %>
+                <a class="btn btn-outline-secondary me-2" href="/register">Register</a>
+                <a class="btn btn-outline-primary" href="/login">Login</a>
+            <% } %>
+        </div>
+    </div> 
+</header>
