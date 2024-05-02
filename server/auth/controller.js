@@ -1,32 +1,26 @@
 const User = require('./User');
 const bcrypt = require('bcrypt');
 
-// Sign Up
 const signUp = async (req, res) => {
     try {
         const { email, full_name, password, re_password } = req.body;
 
-        // Check if any required field is missing
         if (!email || !full_name || !password || !re_password) {
             return res.redirect('/register?error=Missing required fields');
         }
 
-        // Check if passwords match
         if (password !== re_password) {
             return res.redirect('/register?error=Passwords do not match');
         }
 
-        // Check if the email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.redirect('/register?error=Email already registered');
         }
 
-        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create and save the new user with default status and registration time
         const newUser = new User({
             email,
             full_name,
@@ -36,13 +30,13 @@ const signUp = async (req, res) => {
         });
         await newUser.save();
 
-        // Redirect to login page after successful registration
         res.redirect('/login');
     } catch (error) {
         console.error("Error during sign-up:", error);
         res.redirect('/register?error=Unexpected error');
     }
 };
+
 
 // Sign In
 const signIn = async (req, res) => {
@@ -63,18 +57,15 @@ const signIn = async (req, res) => {
     }
 };
 
-// Edit User
 const editUser = async (req, res) => {
     try {
         const { full_name, password, re_password, about } = req.body;
         const userId = req.user._id;
 
-        // Validate inputs
         if (!full_name || !password || !re_password || !about) {
             return res.redirect(`/edit/${userId}?error=Missing required fields`);
         }
 
-        // Check if passwords match
         if (password !== re_password) {
             return res.redirect(`/edit/${userId}?error=Passwords do not match`);
         }
@@ -84,11 +75,9 @@ const editUser = async (req, res) => {
             return res.redirect(`/edit/${userId}?error=User not found`);
         }
 
-        // Hash the new password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Update user details
         user.full_name = full_name;
         user.about = about;
         user.password = hashedPassword;
